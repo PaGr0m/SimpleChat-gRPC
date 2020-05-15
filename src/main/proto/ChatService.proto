@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package com.jetbrains.university;
+
+import "google/protobuf/timestamp.proto";
+
+message Mail {
+  string sender = 1;
+  google.protobuf.Timestamp sendTime = 2;
+  string text = 3;
+}
+
+service Chat {
+  rpc chatStream(Mail) returns (Mail);
+}
