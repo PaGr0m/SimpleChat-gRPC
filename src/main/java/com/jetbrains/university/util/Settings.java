@@ -7,11 +7,7 @@ public class Settings {
     private final static String SERVER_OPT = "s";
     private final static String CLIENT_OPT = "c";
     private final static String PORT_OPT = "p";
-
-    private boolean isServer;
-    private String address;
-    private int port;
-
+    private final static String USERNAME_OPT = "u";
     private static final Options cliOptions = new Options();
 
     static {
@@ -27,7 +23,16 @@ public class Settings {
                 PORT_OPT, "port", true,
                 "specify the port number"
         );
+        cliOptions.addOption(
+                USERNAME_OPT, "user", true,
+                "set user name"
+        );
     }
+
+    private boolean isServer;
+    private String address;
+    private int port;
+    private String userName;
 
     public Settings(String[] args) {
         CommandLineParser parser = new DefaultParser();
@@ -42,8 +47,9 @@ public class Settings {
             isServer = parsed.hasOption(SERVER_OPT);
             address = parsed.getOptionValue(CLIENT_OPT);
             port = Integer.parseInt(parsed.getOptionValue(PORT_OPT));
+            userName = parsed.getOptionValue(USERNAME_OPT);
 
-            if (address != null && isServer) {
+            if (userName == null || address != null && isServer || address == null && !isServer) {
                 printHelpAndExit();
             }
         } catch (ParseException | NumberFormatException e) {
@@ -66,5 +72,9 @@ public class Settings {
 
     public int getPort() {
         return port;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 }

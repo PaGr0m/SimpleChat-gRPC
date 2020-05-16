@@ -1,21 +1,24 @@
 package com.jetbrains.university;
 
+import com.jetbrains.university.ChatGrpc.ChatStub;
+import com.jetbrains.university.util.ColorPrinter;
 import io.grpc.Channel;
 import io.grpc.ManagedChannelBuilder;
 
-import java.util.logging.Logger;
-
 public class ChatClient {
+    private final ColorPrinter logger;
+    private final ChatStub stub;
+    private final SimpleConsoleChat chat;
 
-    private static final Logger logger = Logger.getLogger(ChatClient.class.getName());
-    private final String address;
-    private final int port;
-
-    public ChatClient(String address, int port) {
-        this.address = address;
-        this.port = port;
-
+    public ChatClient(String address, int port, ColorPrinter logger, String userName) {
+        this.logger = logger;
         Channel channel = ManagedChannelBuilder.forAddress(address, port).usePlaintext().build();
-        ChatGrpc.newStub(channel);
+        stub = ChatGrpc.newStub(channel);
+        chat = new SimpleConsoleChat(logger, userName);
     }
+
+    public void runChat() {
+        chat.chatStream(stub.chatStream(SimpleConsoleChat.getPrinterObserver(logger, null)));
+    }
+
 }
