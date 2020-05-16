@@ -11,5 +11,5 @@ message Mail {
 }
 
 service Chat {
-  rpc chatStream(Mail) returns (Mail);
+  rpc chatStream(stream Mail) returns (stream Mail);
 }
