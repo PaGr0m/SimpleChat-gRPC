@@ -1,8 +1,10 @@
-package com.jetbrains.university;
+package com.jetbrains.university.chat;
 
 import com.google.protobuf.Timestamp;
 import com.jetbrains.university.ChatGrpc.ChatImplBase;
+import com.jetbrains.university.ChatService.Mail;
 import com.jetbrains.university.util.ColorPrinter;
+import com.jetbrains.university.util.LogMessages;
 import com.jetbrains.university.util.MailUtils;
 import io.grpc.stub.StreamObserver;
 
@@ -27,7 +29,7 @@ public class SimpleConsoleChat extends ChatImplBase {
 
             @Override
             public void onError(Throwable t) {
-                logger.log(Level.WARNING, "ERROR IN CHAT");
+                logger.log(Level.WARNING, LogMessages.CHAT_ERROR);
             }
 
             @Override
@@ -35,7 +37,7 @@ public class SimpleConsoleChat extends ChatImplBase {
                 if (responseObserver != null) {
                     responseObserver.onCompleted();
                 }
-                logger.log(Level.INFO, "BYE!");
+                logger.log(Level.INFO, LogMessages.CHAT_GOOD_BYE);
             }
         };
     }
@@ -48,19 +50,20 @@ public class SimpleConsoleChat extends ChatImplBase {
                 if (line.equals("exit")) {
                     break;
                 }
+
                 response.onNext(Mail.newBuilder()
-                        .setSender(userName).setText(line)
-                        .setSendTime(
-                                Timestamp.newBuilder()
-                                        .setSeconds(System.currentTimeMillis() / 1000).build())
-                        .build());
+                                    .setSender(userName)
+                                    .setText(line)
+                                    .setSendTime(Timestamp.newBuilder()
+                                                          .setSeconds(System.currentTimeMillis() / 1000).build())
+                                    .build());
             }
         }).start();
     }
 
     @Override
     public StreamObserver<Mail> chatStream(StreamObserver<Mail> responseObserver) {
-        logger.log(Level.FINE, "CONNECTED!");
+        logger.log(Level.FINE, LogMessages.CHAT_CONNECTED);
         runIOThread(responseObserver);
         return getPrinterObserver(logger, responseObserver);
     }

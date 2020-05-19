@@ -1,6 +1,5 @@
 package com.jetbrains.university.util;
 
-
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,5 +37,4 @@ public class ColorPrinter {
     public void println(String msg) {
         output.println(ANSI_WHITE + msg + ANSI_WHITE);
     }
-
 }
